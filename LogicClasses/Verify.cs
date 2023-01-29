@@ -78,7 +78,7 @@ namespace TapProjLogic
                 return context.Sites.Single(s => s.Name == name);
             }
             catch (InvalidOperationException e) {
-                throw new AuctionSiteInvalidOperationException("Site doesn't exists");
+                throw new AuctionSiteInvalidOperationException("Site doesn't exists",e);
             }
         }
         public static DbUser ReturnUserContext(string username, ProjectDbContext context) {
@@ -86,7 +86,7 @@ namespace TapProjLogic
                 return context.Users.Single(u => u.Username == username);
             }
             catch (InvalidOperationException e) {
-                throw new AuctionSiteInvalidOperationException("User doesn't exists");
+                throw new AuctionSiteInvalidOperationException("User doesn't exists", e);
             }
         }
         public static DbUser ReturnUserString(string username, string connectionString) {
@@ -98,7 +98,7 @@ namespace TapProjLogic
                 return context.Sessions.Single(s => s.User.Username == username);
             }
             catch (InvalidOperationException e) {
-                throw new AuctionSiteInvalidOperationException("Cannot find the user on the db!");
+                throw new AuctionSiteInvalidOperationException("Cannot find the user on the db!", e);
             }
         }
         public static DbAuction ReturnAuction(int id, ProjectDbContext context) {
@@ -106,7 +106,7 @@ namespace TapProjLogic
                 return context.Auctions.Single(a => a.AuctionId == id);
             }
             catch (InvalidOperationException e) {
-                throw new AuctionSiteInvalidOperationException(@"Auction doesn't exists");
+                throw new AuctionSiteInvalidOperationException(@"Auction doesn't exists", e);
             }
         }
     }

@@ -13,8 +13,8 @@ namespace LogicClasses
                 try {
                     return new ClockClass(timezone, DateTime.Now);
                 }
-                catch (Exception) {
-                    throw new AuctionSiteArgumentOutOfRangeException();
+                catch (Exception e) {
+                    throw new AuctionSiteArgumentOutOfRangeException(@"Error instantiating AlarmClock", e);
                 }
             }
 
@@ -23,8 +23,8 @@ namespace LogicClasses
                     try {
                         return new AlarmClass();
                     }
-                    catch (Exception) {
-                        throw new AuctionSiteArgumentOutOfRangeException();
+                    catch (Exception e) {
+                        throw new AuctionSiteArgumentOutOfRangeException(@"Error instantiating Alarm", e);
                     }
                 }
                 public DateTime Now { get; }
@@ -58,7 +58,7 @@ namespace LogicClasses
                 }
                 catch (Exception e) {
                     if (e is AuctionSiteInvalidOperationException) throw;
-                    throw new AuctionSiteUnavailableDbException(@"");
+                    throw new AuctionSiteUnavailableDbException(@"Database connection error", e);
                 }
             }
 
@@ -232,7 +232,7 @@ namespace LogicClasses
                 c.Add(new DbHost());
                 c.SaveChanges();
             }
-            catch (SqlException e) { throw new AuctionSiteUnavailableDbException(@"Database connection error");
+            catch (SqlException e) { throw new AuctionSiteUnavailableDbException(@"Database connection error", e);
             }
         }
 
@@ -247,7 +247,7 @@ namespace LogicClasses
                 return new HostObject(alarmClockFactory, connectionString);
             }
             catch (SqlException e) {
-                throw new AuctionSiteUnavailableDbException(@"Database connection error");
+                throw new AuctionSiteUnavailableDbException(@"Database connection error",e);
             }
             
         }
@@ -307,7 +307,7 @@ namespace LogicClasses
             }
             catch (Exception e) {
                 if (e is AuctionSiteInvalidOperationException) throw;
-                throw new AuctionSiteUnavailableDbException(e.Message);
+                throw new AuctionSiteUnavailableDbException(@"Database connection error",e);
             }
         }
         public string Id { get; set; }
@@ -317,8 +317,8 @@ namespace LogicClasses
                     using var c = new ProjectDbContext(ConnectionString);
                     return c.Sessions.Where(s => s.SessionId == Id).Select(s => s.ValidUntil).Single();
                 }
-                catch (Exception e) {
-                    throw new AuctionSiteArgumentException(@"");
+                catch (Exception) {
+                    throw new AuctionSiteArgumentException();
                 }
             }
             
@@ -336,12 +336,6 @@ namespace LogicClasses
             ConnectionString = connectionString;
             AlarmClock = alarmClock;
         }
-        public SessionObject(string id, string connectionString, IAlarmClock alarmClock) {
-            Id = id;
-            ConnectionString = connectionString;
-            AlarmClock = alarmClock;
-        }
-
     }
 
     
@@ -450,7 +444,7 @@ namespace LogicClasses
                     return c.Sites.Where(s => s.Name == Name).Select(s => s.Timezone).Single();
                 }
                 catch (Exception e){
-                    throw new AuctionSiteUnavailableDbException(@"");
+                    throw new AuctionSiteUnavailableDbException(@"Database connection error", e);
                 }
             }
         }
@@ -461,7 +455,7 @@ namespace LogicClasses
                     return c.Sites.Where(s => s.Name == Name).Select(s => s.SessionExpirationInSeconds).Single();
                 }
                 catch (Exception e) {
-                    throw new AuctionSiteUnavailableDbException(@"");
+                    throw new AuctionSiteUnavailableDbException(@"Database connection error", e);
                 }
             }
         }
@@ -473,7 +467,7 @@ namespace LogicClasses
                     return c.Sites.Where(s => s.Name == Name).Select(s => s.MinimumBidIncrement).Single();
                 }
                 catch (Exception e) {
-                    throw new AuctionSiteUnavailableDbException(@"");
+                    throw new AuctionSiteUnavailableDbException(@"Database connection error",e);
                 }
             }
         }
@@ -509,7 +503,7 @@ namespace LogicClasses
                 c.SaveChanges();
             }
             catch (InvalidOperationException e) {
-                throw new AuctionSiteInvalidOperationException(@"User doesn't exists");
+                throw new AuctionSiteInvalidOperationException(@"User doesn't exists",e);
             }
         }
         public override bool Equals(object obj) {
