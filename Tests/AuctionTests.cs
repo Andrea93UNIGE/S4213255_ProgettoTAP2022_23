@@ -276,7 +276,8 @@
         ///     is not accepted
         /// </summary>
         [Test]
-        public void Bid_NotEnoughMoney_False1() {
+        public void Bid_NotEnoughMoney_False1() 
+        {
             TheAuction.Bid(Bidder2Session, 100);
             TheAuction.Bid(Bidder1Session, 20);
             var accepted = TheAuction.Bid(Bidder2Session, 50);

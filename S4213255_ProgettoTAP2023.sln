@@ -3,13 +3,13 @@ Microsoft Visual Studio Solution File, Format Version 12.00
 # Visual Studio Version 17
 VisualStudioVersion = 17.4.33122.133
 MinimumVisualStudioVersion = 10.0.40219.1
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "UI", "S4213255_ProgettoTAP2022_23\UI.csproj", "{57C00CB5-7AC5-47FF-B162-6D12DBDAFCB4}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "UI", "S4213255_ProgettoTAP2022_23\UI.csproj", "{57C00CB5-7AC5-47FF-B162-6D12DBDAFCB4}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Tests", "Tests\Tests.csproj", "{03A2D6B3-105E-4A38-951D-A867962ED89A}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Tests", "Tests\Tests.csproj", "{03A2D6B3-105E-4A38-951D-A867962ED89A}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Entities", "Entities\Entities.csproj", "{849A7A89-DB0D-4991-B5E6-928DC3C7BF2C}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Entities", "Entities\Entities.csproj", "{849A7A89-DB0D-4991-B5E6-928DC3C7BF2C}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "TapProjLogic", "LogicClasses\TapProjLogic.csproj", "{55D2938E-0B7C-4975-9BE9-B9737647DECE}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "TapProjLogic", "LogicClasses\TapProjLogic.csproj", "{55D2938E-0B7C-4975-9BE9-B9737647DECE}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution

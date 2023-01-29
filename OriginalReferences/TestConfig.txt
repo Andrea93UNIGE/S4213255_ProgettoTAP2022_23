@@ -1,0 +1,2 @@
+..\..\..\..\LogicClasses\bin\Debug\net6.0\TapProjLogic.dll
+Data Source=.;Initial Catalog=Tap_Project_2022_23;Integrated Security = True

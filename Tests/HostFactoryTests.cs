@@ -24,7 +24,7 @@
         ///     throws AuctionSiteArgumentNullException
         /// </summary>
         [Test]
-        public void LoadHoast_NullClockFactory_Throws() {
+        public void LoadHost_NullClockFactory_Throws() {
             Assert.That(() => TheHostFactory.LoadHost(TheConnectionString, null!), Throws.TypeOf<AuctionSiteArgumentNullException>());
         }
     }

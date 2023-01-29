@@ -1,7 +1,9 @@
 using System.Reflection;
 
-namespace TAP22_23.AuctionSite.Testing {
-    public static class Configuration {
+namespace TAP22_23.AuctionSite.Testing
+{
+    public static class Configuration
+    {
         public static string ImplementationAssembly { get; private set; } = "";
         public static string ConnectionString { get; private set; } = "";
 
@@ -12,22 +14,26 @@ namespace TAP22_23.AuctionSite.Testing {
             }
         }
     }
-
-    public class TestAlarm : IAlarm {
+    
+    public class TestAlarm : IAlarm
+    {
         public event Action? RingingEvent;
 
         public void Dispose() { GC.SuppressFinalize(this); }
 
-        internal void ExecuteActions() {
+        internal void ExecuteActions()
+        {
             RingingEvent?.Invoke();
         }
     }
 
-    public class TestAlarmClock : IAlarmClock {
+    public class TestAlarmClock : IAlarmClock
+    {
         private readonly TestAlarm _theAlarm = new();
         public readonly List<int> InstantiateAlarmCallData = new();
 
-        public TestAlarmClock(int timezone) {
+        public TestAlarmClock(int timezone)
+        {
             Now = DateTime.UtcNow.AddHours(timezone);
             Timezone = timezone;
         }
@@ -35,32 +41,39 @@ namespace TAP22_23.AuctionSite.Testing {
         public int Timezone { get; }
         public DateTime Now { get; set; }
 
-        public IAlarm InstantiateAlarm(int frequencyInMs) {
+        public IAlarm InstantiateAlarm(int frequencyInMs)
+        {
             InstantiateAlarmCallData.Add(frequencyInMs);
             return _theAlarm;
         }
 
-        public void AddHours(double h) {
+        public void AddHours(double h)
+        {
             Now = Now.AddHours(h);
         }
 
-        public void AddSeconds(double s) {
+        public void AddSeconds(double s)
+        {
             Now = Now.AddSeconds(s);
         }
 
-        public void AddMinutes(double m) {
+        public void AddMinutes(double m)
+        {
             Now = Now.AddMinutes(m);
         }
 
-        public void RunRingingEvent() {
+        public void RunRingingEvent()
+        {
             _theAlarm.ExecuteActions();
         }
     }
 
-    public class TestAlarmClockFactory : IAlarmClockFactory {
+    public class TestAlarmClockFactory : IAlarmClockFactory
+    {
         private readonly Dictionary<int, TestAlarmClock> Clocks = new();
 
-        public IAlarmClock InstantiateAlarmClock(int timezone) {
+        public IAlarmClock InstantiateAlarmClock(int timezone)
+        {
             if (Clocks.TryGetValue(timezone, out var clock))
                 return clock;
             clock = new TestAlarmClock(timezone);
@@ -70,10 +83,12 @@ namespace TAP22_23.AuctionSite.Testing {
     }
 
     [TestFixture]
-    public abstract class AuctionSiteTests {
+    public abstract class AuctionSiteTests
+    {
         public static IHostFactory TheHostFactory;
         public static string TheConnectionString;
-        public static void AuctionSiteTestsSetUp() {
+        public static void AuctionSiteTestsSetUp()
+        {
             Configuration.SetUp();
             var implementationAssembly = Assembly.LoadFrom(Configuration.ImplementationAssembly);
             var hostFactoryType = implementationAssembly.GetTypes().Single(t => typeof(IHostFactory).IsAssignableFrom(t));
@@ -81,7 +96,8 @@ namespace TAP22_23.AuctionSite.Testing {
             TheConnectionString = Configuration.ConnectionString;
         }
         [OneTimeSetUp]
-        public void AuctionSiteTestsInitialize() {
+        public void AuctionSiteTestsInitialize()
+        {
             AuctionSiteTestsSetUp();
         }
 
@@ -90,23 +106,27 @@ namespace TAP22_23.AuctionSite.Testing {
         protected TestAlarmClock? TheClock;
 
         [SetUp]
-        public void SetupHost() {
+        public void SetupHost()
+        {
             TheHostFactory.CreateHost(TheConnectionString);
             TheHost = TheHostFactory.LoadHost(TheConnectionString, TheAlarmClockFactory);
         }
 
-        protected ISite LoadSiteFromName(string siteName, int timezone) {
+        protected ISite LoadSiteFromName(string siteName, int timezone)
+        {
             TheClock = (TestAlarmClock?)TheAlarmClockFactory.InstantiateAlarmClock(timezone);
             return TheHostFactory.LoadHost(TheConnectionString, TheAlarmClockFactory).LoadSite(siteName);
         }
-        protected ISite CreateAndLoadEmptySite(int timeZone, string siteName, int sessionExpirationTimeInSeconds, double minimumBidIncrement, out TestAlarmClock alarmClock) {
+        protected ISite CreateAndLoadEmptySite(int timeZone, string siteName, int sessionExpirationTimeInSeconds, double minimumBidIncrement, out TestAlarmClock alarmClock)
+        {
             TheHostFactory.LoadHost(TheConnectionString, TheAlarmClockFactory).CreateSite(siteName, timeZone, sessionExpirationTimeInSeconds, minimumBidIncrement);
             alarmClock = (TestAlarmClock)TheAlarmClockFactory.InstantiateAlarmClock(timeZone);
             return TheHostFactory.LoadHost(TheConnectionString, TheAlarmClockFactory).LoadSite(siteName);
         }
         protected ISite CreateAndLoadSite(int timeZone, string siteName, int sessionExpirationTimeInSeconds,
                                           double minimumBidIncrement, out TestAlarmClock alarmClock,
-                                          List<string>? userNameList = null, string password = "puffo") {
+                                          List<string>? userNameList = null, string password = "puffo")
+        {
             var newSite = CreateAndLoadEmptySite(timeZone, siteName, sessionExpirationTimeInSeconds, minimumBidIncrement, out alarmClock);
             if (null != userNameList)
                 foreach (var user in userNameList)
@@ -118,7 +138,8 @@ namespace TAP22_23.AuctionSite.Testing {
                                           double minimumBidIncrement, List<string> userNameList,
                                           List<string> loggedUserNameList, int delayBetweenLoginInSeconds,
                                           out List<ISession> sessionList, out TestAlarmClock alarmClock,
-                                          string password = "puffo") {
+                                          string password = "puffo")
+        {
             //Pre: loggedUserNameList non empty and included in userNameList
             var newSite = CreateAndLoadEmptySite(timeZone, siteName, sessionExpirationTimeInSeconds, minimumBidIncrement, out alarmClock);
             foreach (var user in userNameList)
@@ -126,28 +147,33 @@ namespace TAP22_23.AuctionSite.Testing {
             sessionList = new List<ISession>();
             var howManySessions = loggedUserNameList.Count;
             sessionList.Add(newSite.Login(loggedUserNameList[0], password)!);
-            for (var i = 1; i < howManySessions; i++) {
+            for (var i = 1; i < howManySessions; i++)
+            {
                 alarmClock.AddSeconds(delayBetweenLoginInSeconds);
                 sessionList.Add(newSite.Login(loggedUserNameList[i], password)!);
             }
             return TheHostFactory.LoadHost(TheConnectionString, TheAlarmClockFactory).LoadSite(siteName);
         }
 
-        protected static bool AreEquivalentSessions(ISession? session1, ISession? session2) {
-            if (null == session2) {
+        protected static bool AreEquivalentSessions(ISession? session1, ISession? session2)
+        {
+            if (null == session2)
+            {
                 return session1 == null;
             }
             return CheckSessionValues(session1, session2.Id, session2.ValidUntil, session2.User);
         }
 
-        protected static bool CheckSessionValues(ISession? session, string sessionId, DateTime validUntil, IUser user) {
+        protected static bool CheckSessionValues(ISession? session, string sessionId, DateTime validUntil, IUser user)
+        {
             if (null == session)
                 return false;
             return session.Id == sessionId && session.ValidUntil == validUntil && session.User.Equals(user);
         }
 
         protected bool CheckAuctionValues(IAuction auction, int auctionId, string sellerUsername, DateTime endsOn, string auctionDescription, double auctionCurrentPrice,
-                                          string? currentWinnerUsername = null) {
+                                          string? currentWinnerUsername = null)
+        {
             var currentWinner = auction.CurrentWinner();
             var currentWinnerIsCorrect = (currentWinnerUsername == null) ? currentWinner == null : currentWinner != null && currentWinner.Username == currentWinnerUsername;
             return auction.Id == auctionId && auction.Seller.Username == sellerUsername && SameDateTime(auction.EndsOn, endsOn) && auction.Description == auctionDescription &&
@@ -160,7 +186,8 @@ namespace TAP22_23.AuctionSite.Testing {
         /// <param name="x">first date</param>
         /// <param name="y">second date</param>
         /// <returns>true iff date, hour, minute and second components are the same in both dates</returns>
-        protected bool SameDateTime(DateTime x, DateTime y) {
+        protected bool SameDateTime(DateTime x, DateTime y)
+        {
             return x.Date == y.Date && x.Hour == y.Hour && x.Minute == y.Minute && x.Second == y.Second;
         }
     }
